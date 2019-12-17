@@ -1,6 +1,6 @@
 <h3>2x2 Rubik's Cube Solver</h3>
 
-<h4>How to enter:<h4><br>
+<h4>How to enter:</h4><br>
 The state of the cube is entered as parameters for the solve method (located in the main method)<br>
 A solved cube with white on top would be entered as "wwwwggggrrrrooooyyyybbbb" where:<br><br>
 w = white<br>
