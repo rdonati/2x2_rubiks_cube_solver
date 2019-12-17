@@ -1,0 +1,53 @@
+body{
+    font-family: arial;
+}
+
+#cube{
+    width: 480px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 160px);
+}
+
+table{
+    border: 2px solid black;
+    border-collapse: collapse;
+}
+
+#colorsTable td{
+    text-align: center;
+    font-weight: bold;
+    height: 30px;
+    width: 30px;
+    border: 1px solid black;
+}
+
+#tile{
+    border: 2px solid black;
+    height: 80px;
+    width: 80px;
+}
+
+#red #tile{
+    background-color: red;
+}
+
+#orange #tile{
+    background-color: orange;
+}
+
+#white #tile{
+    background-color: white;
+}
+
+#blue #tile{
+    background-color: blue;
+}
+
+#green #tile{
+    background-color: green;
+}
+
+#yellow #tile{
+    background-color: yellow;
+}
