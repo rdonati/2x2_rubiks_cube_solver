@@ -12,6 +12,7 @@ o = orange<br>
 y = yellow<br>
 b = blue<br><br>
 
+Order in which to enter state:
 <img src = "2x2_guide.png">
 
 <h4>How it Works (the basics)</h4>
