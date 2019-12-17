@@ -2,7 +2,7 @@
 
 <h4>How to use:</h4>
 - A scrambled state is identified by a string where each letter represents the color of a sticker on the cube (see diagram)<br>
-- The scrambled state is enteres as a parameter for the solve method (located in the main method)<br>
+- The scrambled state is entered as a parameter for the solve method (located in the main method)<br>
 - A solved cube with white on top would be entered as "wwwwggggrrrrooooyyyybbbb"<br><br>
 
 w = white<br>
