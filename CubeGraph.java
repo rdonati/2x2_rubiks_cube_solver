@@ -6,7 +6,9 @@ public class CubeGraph{
     StateArray SOLVED_CUBE = new StateArray(new byte[]{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6});
     public static void main(String[] args) {
         CubeGraph c = new CubeGraph();
-        c.solve("oyrrbbgowrbyyygrwwogwobg");
+        String scramble = "bbbbrrrryyyywwwwggggoooo";
+        if(args.length > 0) scramble = args[0];
+        c.solve(scramble);
     }
 
     public class Vertex{
@@ -97,6 +99,10 @@ public class CubeGraph{
             return new String(A);
         }
 
+        /**
+         * Finds the solution, in standard format, for the cube given that is in the correct orientation
+         * @return The solution, in standard format, for the cube given that is in the correct orientation
+         */
         public String findSolution(){
             String solution = "";
             Vertex v = this;
@@ -119,6 +125,11 @@ public class CubeGraph{
             return solution;
         }
 
+        /**
+         * Finds the solution, in standard format, for the cube including the moves needed to put it in the correct oritentation
+         * @param rotations The rotations necessary to orient the cube such that the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom (see orient method)
+         * @return The solution, in standard format, for the cube including the moves needed to put it in the correct oritentation
+         */
         public String find3GenSolution(int[] rotations){
             String solution = "";
             
@@ -126,13 +137,13 @@ public class CubeGraph{
             else if(rotations[0] == 2) solution += "x2 ";
             else if(rotations[0] == 3) solution += "x' ";
 
-            if(rotations[1] == 1) solution += "y ";
-            else if(rotations[1] == 2) solution += "y2 ";
-            else if(rotations[1] == 3) solution += "y' ";
-
             if(rotations[2] == 1) solution += "z ";
             else if(rotations[2] == 2) solution += "z2 ";
             else if(rotations[2] == 3) solution += "z' ";
+
+            if(rotations[1] == 1) solution += "y ";
+            else if(rotations[1] == 2) solution += "y2 ";
+            else if(rotations[1] == 3) solution += "y' ";
             
             solution += findSolution();
             return solution;
@@ -145,18 +156,21 @@ public class CubeGraph{
          */
         public String findSolutionNoRotations(int[] rotations){
             String solution = findSolution();
-            //Reversing z rotations
-            for(int i = 0; i < rotations[2]; i++){
-                solution = zTransform(solution);
-            }
             //Reversing y rotations
             for(int i = 0; i < rotations[1]; i++){
                 solution = yTransform(solution);
             }
+            
+            //Reversing z rotations
+            for(int i = 0; i < rotations[2]; i++){
+                solution = zTransform(solution);
+            }
+            
             //Reversing x rotations
             for(int i = 0; i < rotations[0]; i++){
                 solution = xTransform(solution);
             }
+
             return solution;
         }
 
@@ -263,47 +277,55 @@ public class CubeGraph{
     }
 
     /**
-     * Rotates the cube so that the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom.
+     * Generates an array that stores the number of x, y, and z rotations to orient the cube so that the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom.
+     * Only ever uses two of the three moves (x,y,z) and will either be in the order x,y or z,y
      * @param s State to be reoriented
      * @return The rotations necessary to move from the original state to the desired state. In the form [x-rotations, y-rotations, z-rotations]
      */
     public int[] orient(StateArray s){
-        StateArray sx = s;
-        int[] rotations = new int[3];
+        int[] rotations = new int[]{0, 0, 0};
+        int yRotations;
 
-        //Looping through possible rotations of the cube in a DFS-style manner
-        //Rotating cube (x) up to 4 times
-        for(int i = 0; i < 4; i++){
-            sx = x(sx);
-            rotations[0]++;
-            if(sx.isCorrectOrientation()){
-                s = sx;
+        //Rotates the cube, first in the x direction, then checks every possible y rotation
+        for(int x = 0; x < 4; x++){
+            rotations[0] = x;
+            yRotations = checkYRotations(s);
+            if(yRotations > -1){
+                rotations[1] = yRotations;
                 return rotations;
             }
-            StateArray sy = sx.clone();
-            rotations[1] = 0;
-            //Rotating cube (y) up to 4 times
-            for(int j = 0; j < 4; j++){
-                sy = y(sy);
-                rotations[1]++;
-                if(sy.isCorrectOrientation()){
-                    s = sy;
-                    return rotations;
-                }
-                StateArray sz = sy.clone();
-                rotations[2] = 0;
-                //Rotating cube (z) up to 4 times
-                for(int k = 0; k < 4; k++){
-                    sz = z(sz);
-                    rotations[2]++;
-                    if(sz.isCorrectOrientation()){
-                        s = sz;
-                        return rotations;
-                    }
-                }
-            }
+            s = x(s);
         }
+
+        //Rotates once in the z direction, then checks all y
+        s = z(s);
+        yRotations = checkYRotations(s);
+        if(yRotations > -1){
+            rotations[0] = 0;
+            rotations[1] = yRotations;
+            rotations[2] = 1;
+            return rotations;
+        }
+
+        //Rotates twice (for a total of 3 times) in the z direction, then checks all y
+        s = z(z(s));
+        yRotations = checkYRotations(s);
+        if(yRotations > -1){
+            rotations[0] = 0;
+            rotations[1] = yRotations;
+            rotations[2] = 3;
+            return rotations;
+        }
+
         return null;
+    }
+
+    public int checkYRotations(StateArray s){
+        for(int y = 0; y < 4; y++){
+            if(s.isCorrectOrientation()) return y;
+            s = y(s);
+        }
+        return -1;
     }
 
     /**
@@ -340,8 +362,8 @@ public class CubeGraph{
 
         //Applying rotations
         for(int x = 0; x < rotations[0]; x++) s = x(s);
-        for(int y = 0; y < rotations[1]; y++) s = y(s);
         for(int z = 0; z < rotations[2]; z++) s = z(s);
+        for(int y = 0; y < rotations[1]; y++) s = y(s);
 
         Vertex finalState = run(s);
         System.out.println(finalState.find3GenSolution(rotations));
