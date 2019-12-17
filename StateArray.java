@@ -42,11 +42,11 @@ public class StateArray{
     }
 
     /**
-     * Checks whether the (white, green, orange) corner is in the top left position with white on top
-     * @return True if the (white, green, orange) corner is in the top left position with white on top; false othewise
+     * Checks whether the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom
+     * @return True if the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom
      */
     public boolean isCorrectOrientation(){
-        if(data[2] == 0 && data[13] == 3 && data[4] == 1) return true;
+        if(data[20] == 5 && data[14] == 3 && data[18] == 4) return true;
         return false;
     }
 

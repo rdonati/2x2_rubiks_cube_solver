@@ -6,7 +6,7 @@ public class CubeGraph{
     StateArray SOLVED_CUBE = new StateArray(new byte[]{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6});
     public static void main(String[] args) {
         CubeGraph c = new CubeGraph();
-        c.solve("rorobyyrgwwogybrgbogywwb");
+        c.solve("oyrrbbgowrbyyygrwwogwobg");
     }
 
     public class Vertex{
@@ -97,13 +97,7 @@ public class CubeGraph{
             return new String(A);
         }
 
-
-        /**
-         * Uses each vertex's prev to backtrack to the solution, producing the solution.
-         * @param rotations The rotations necessary to orient the cube such that the (white, green, orange) corner is in the top left with white on top (see orient method)
-         * @return The solution to the vertex's state in standard notation
-         */
-        public String findSolution(int[] rotations){
+        public String findSolution(){
             String solution = "";
             Vertex v = this;
             while(v.prev != null){
@@ -111,26 +105,46 @@ public class CubeGraph{
                 if(s.equals(u(u(v.state)))) solution += "U2 ";
                 if(s.equals(f(f(v.state)))) solution += "F2 ";
                 if(s.equals(r(r(v.state)))) solution += "R2 ";
-                if(s.equals(l(l(v.state)))) solution += "L2 ";
-                if(s.equals(d(d(v.state)))) solution += "D2 ";
-                if(s.equals(b(b(v.state)))) solution += "B2 ";
 
                 if(s.equals(u(v.state))) solution += "U ";
                 if(s.equals(f(v.state))) solution += "F ";
                 if(s.equals(r(v.state))) solution += "R ";
-                if(s.equals(l(v.state))) solution += "L ";
-                if(s.equals(d(v.state))) solution += "D ";
-                if(s.equals(b(v.state))) solution += "B ";
                 
                 if(s.equals(uP(v.state))) solution += "U' ";
                 if(s.equals(fP(v.state))) solution += "F' ";
                 if(s.equals(rP(v.state))) solution += "R' ";
-                if(s.equals(lP(v.state))) solution += "L' ";
-                if(s.equals(dP(v.state))) solution += "D' ";
-                if(s.equals(bP(v.state))) solution += "B' ";
 
                 v = v.prev;
             }
+            return solution;
+        }
+
+        public String find3GenSolution(int[] rotations){
+            String solution = "";
+            
+            if(rotations[0] == 1) solution += "x ";
+            else if(rotations[0] == 2) solution += "x2 ";
+            else if(rotations[0] == 3) solution += "x' ";
+
+            if(rotations[1] == 1) solution += "y ";
+            else if(rotations[1] == 2) solution += "y2 ";
+            else if(rotations[1] == 3) solution += "y' ";
+
+            if(rotations[2] == 1) solution += "z ";
+            else if(rotations[2] == 2) solution += "z2 ";
+            else if(rotations[2] == 3) solution += "z' ";
+            
+            solution += findSolution();
+            return solution;
+        }
+
+        /**
+         * Uses each vertex's prev to backtrack to the solution, producing the solution.
+         * @param rotations The rotations necessary to orient the cube such that the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom (see orient method)
+         * @return The solution to the vertex's state in standard notation
+         */
+        public String findSolutionNoRotations(int[] rotations){
+            String solution = findSolution();
             //Reversing z rotations
             for(int i = 0; i < rotations[2]; i++){
                 solution = zTransform(solution);
@@ -143,7 +157,7 @@ public class CubeGraph{
             for(int i = 0; i < rotations[0]; i++){
                 solution = xTransform(solution);
             }
-            return("\nSolution: " + solution + "\n");
+            return solution;
         }
 
     }
@@ -232,24 +246,24 @@ public class CubeGraph{
 
         //Double rotations
         nbs.add(r(r(state)));
-        nbs.add(b(b(state)));
-        nbs.add(b(b(state)));
+        nbs.add(u(u(state)));
+        nbs.add(f(f(state)));
 
         //Single rotations
         nbs.add(r(state));
-        nbs.add(b(state));
-        nbs.add(d(state));
+        nbs.add(u(state));
+        nbs.add(f(state));
 
         //Inverse rotations
         nbs.add(rP(state));
-        nbs.add(bP(state));
-        nbs.add(dP(state));
+        nbs.add(uP(state));
+        nbs.add(fP(state));
 
         return nbs;
     }
 
     /**
-     * Rotates the cube so that the (white, green, orange) corner is on the top right, with white on top.
+     * Rotates the cube so that the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom.
      * @param s State to be reoriented
      * @return The rotations necessary to move from the original state to the desired state. In the form [x-rotations, y-rotations, z-rotations]
      */
@@ -321,7 +335,7 @@ public class CubeGraph{
             return;
         }
 
-        //Finding rotations to put the (white, green, orange) corner in the top left
+        //Finding rotations to put the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom
         int[] rotations = orient(s);
 
         //Applying rotations
@@ -330,7 +344,7 @@ public class CubeGraph{
         for(int z = 0; z < rotations[2]; z++) s = z(s);
 
         Vertex finalState = run(s);
-        System.out.println(finalState.findSolution(rotations));
+        System.out.println(finalState.find3GenSolution(rotations));
     }
 
     /******************************************************************
