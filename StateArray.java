@@ -51,6 +51,15 @@ public class StateArray{
     }
 
     /**
+     * Checks whether the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom
+     * @return True if the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom
+     */
+    public boolean isCorrectOrientation(StateArray s){
+        if(data[20] == s.data[20] && data[14] == s.data[14] && data[18] == s.data[18]) return true;
+        return false;
+    }
+
+    /**
      * Compares two instances by the values in the data array
      * @param obj Object to compare to
      * @return True if the values of the data instance variable are the same; false otherwise
@@ -82,5 +91,609 @@ public class StateArray{
             h = 31 * h + data[i];
         }
         return h;
+    }
+
+    /******************************************************************
+    *                      TURNING METHODS
+    ******************************************************************/
+
+    public StateArray copyTurn(String s){
+        StateArray s2 = clone();
+        switch(s){
+            //Clockwise turns
+            case "u":
+                s2.u();
+                break;
+            case "f":
+                s2.f();
+                break;
+            case "r":
+                s2.r();
+                break;
+            case "l":
+                s2.l();
+                break;
+            case "d":
+                s2.d();
+                break;
+            case "b":
+                s2.b();
+                break;
+
+            //Inverse turns    
+            case "uP":
+                s2.uP();
+                break;
+            case "fP":
+                s2.fP();
+                break;
+            case "rP":
+                s2.rP();
+                break;
+            case "lP":
+                s2.lP();
+                break;
+            case "dP":
+                s2.dP();
+                break;
+            case "bP":
+                s2.bP();
+                break;
+
+            //Double turns
+            case "u2":
+                s2.u();
+                s2.u();
+                break;
+            case "f2":
+                s2.f();
+                s2.f();
+                break;
+            case "r2":
+                s2.r();
+                s2.r();
+                break;
+            case "l2":
+                s2.l();
+                s2.l();
+                break;
+            case "d2":
+                s2.d();
+                s2.d();
+                break;
+            case "b2":
+                s2.b();
+                s2.b();
+                break;
+
+            //Rotations
+            case "x":
+                s2.x();
+                break;
+            case "y":
+                s2.y();
+                break;
+            case "z":
+                s2.z();
+                break;
+            default:
+                break;
+        }
+        return s2;
+    }
+
+    public void u(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[0];
+        data[0] = data[2];
+        data[2] = data[3];
+        data[3] = data[1];
+        data[1] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[5];
+        data[5] = data[9];
+        data[9] = data[22];
+        data[22] = data[13];
+        data[13] = buffer;
+        buffer = data[4];
+        data[4] = data[8];
+        data[8] = data[23];
+        data[23] = data[12];
+        data[12] = buffer;
+
+        
+    }
+
+    public void f(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[4];
+        data[4] = data[6];
+        data[6] = data[7];
+        data[7] = data[5];
+        data[5] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[2];
+        data[2] = data[15];
+        data[15] = data[17];
+        data[17] = data[8];
+        data[8] = buffer;
+        buffer = data[3];
+        data[3] = data[13];
+        data[13] = data[16];
+        data[16] = data[10];
+        data[10] = buffer;
+
+        
+    }
+
+    public void r(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[8];
+        data[8] = data[10];
+        data[10] = data[11];
+        data[11] = data[9];
+        data[9] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[3];
+        data[3] = data[7];
+        data[7] = data[19];
+        data[19] = data[23];
+        data[23] = buffer;
+        buffer = data[1];
+        data[1] = data[5];
+        data[5] = data[17];
+        data[17] = data[21];
+        data[21] = buffer;
+
+        
+    }
+
+    public void l(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[12];
+        data[12] = data[14];
+        data[14] = data[15];
+        data[15] = data[13];
+        data[13] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[0];
+        data[0] = data[20];
+        data[20] = data[16];
+        data[16] = data[4];
+        data[4] = buffer;
+        buffer = data[2];
+        data[2] = data[22];
+        data[22] = data[18];
+        data[18] = data[6];
+        data[6] = buffer;
+
+        
+    }
+
+    public void d(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[16];
+        data[16] = data[18];
+        data[18] = data[19];
+        data[19] = data[17];
+        data[17] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[6];
+        data[6] = data[14];
+        data[14] = data[21];
+        data[21] = data[10];
+        data[10] = buffer;
+        buffer = data[7];
+        data[7] = data[15];
+        data[15] = data[20];
+        data[20] = data[11];
+        data[11] = buffer;
+
+        
+    }
+
+    public void b(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[20];
+        data[20] = data[22];
+        data[22] = data[23];
+        data[23] = data[21];
+        data[21] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[18];
+        data[18] = data[12];
+        data[12] = data[1];
+        data[1] = data[11];
+        data[11] = buffer;
+        buffer = data[19];
+        data[19] = data[14];
+        data[14] = data[0];
+        data[0] = data[9];
+        data[9] = buffer;
+
+        
+    }
+
+    /******************************************************************
+     *                      INVERSE TURNING METHODS
+     ******************************************************************/
+
+    public void uP(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[1];
+        data[1] = data[3];
+        data[3] = data[2];
+        data[2] = data[0];
+        data[0] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[13];
+        data[13] = data[22];
+        data[22] = data[9];
+        data[9] = data[5];
+        data[5] = buffer;
+        buffer = data[12];
+        data[12] = data[23];
+        data[23] = data[8];
+        data[8] = data[4];
+        data[4] = buffer;
+
+        
+    }
+
+    public void fP(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[5];
+        data[5] = data[7];
+        data[7] = data[6];
+        data[6] = data[4];
+        data[4] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[8];
+        data[8] = data[17];
+        data[17] = data[15];
+        data[15] = data[2];
+        data[2] = buffer;
+        buffer = data[10];
+        data[10] = data[16];
+        data[16] = data[13];
+        data[13] = data[3];
+        data[3] = buffer;
+
+        
+    }
+
+    public void rP(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[9];
+        data[9] = data[11];
+        data[11] = data[10];
+        data[10] = data[8];
+        data[8] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[23];
+        data[23] = data[19];
+        data[19] = data[7];
+        data[7] = data[3];
+        data[3] = buffer;
+        buffer = data[21];
+        data[21] = data[17];
+        data[17] = data[5];
+        data[5] = data[1];
+        data[1] = buffer;
+
+        
+    }
+
+    public void lP(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[13];
+        data[13] = data[15];
+        data[15] = data[14];
+        data[14] = data[12];
+        data[12] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[4];
+        data[4] = data[16];
+        data[16] = data[20];
+        data[20] = data[0];
+        data[0] = buffer;
+        buffer = data[6];
+        data[6] = data[18];
+        data[18] = data[22];
+        data[22] = data[2];
+        data[2] = buffer;
+
+        
+    }
+
+    public void dP(){
+       byte buffer;
+        
+       //FACE ROTATION
+       buffer = data[17];
+       data[17] = data[19];
+       data[19] = data[18];
+       data[18] = data[16];
+       data[16] = buffer;
+       //SURROUNDING STICKERS
+       buffer = data[10];
+       data[10] = data[21];
+       data[21] = data[14];
+       data[14] = data[6];
+       data[6] = buffer;
+       buffer = data[11];
+       data[11] = data[20];
+       data[20] = data[15];
+       data[15] = data[7];
+       data[7] = buffer;
+
+       
+    }
+
+    public void bP(){
+        byte buffer;
+        
+        //FACE ROTATION
+        buffer = data[21];
+        data[21] = data[23];
+        data[23] = data[22];
+        data[22] = data[20];
+        data[20] = buffer;
+        //SURROUNDING STICKERS
+        buffer = data[11];
+        data[11] = data[1];
+        data[1] = data[12];
+        data[12] = data[18];
+        data[18] = buffer;
+        buffer = data[9];
+        data[9] = data[0];
+        data[0] = data[14];
+        data[14] = data[19];
+        data[19] = buffer;
+
+       
+    }
+
+    /******************************************************************
+     *                      ROTATION METHODS
+     ******************************************************************/
+
+    public void x(){
+        byte buffer;
+
+        //RIGHT ROTATION
+        buffer = data[8];
+        data[8] = data[10];
+        data[10] = data[11];
+        data[11] = data[9];
+        data[9] = buffer;
+
+        //LEFT PRIME ROTATION
+        buffer = data[13];
+        data[13] = data[15];
+        data[15] = data[14];
+        data[14] = data[12];
+        data[12] = buffer;
+
+        //MAIN AXIS
+        for(int i = 0; i < 4; i++){
+            buffer = data[i];
+            data[i] = data[4+i];
+            data[4+i] = data[16+i];
+            data[16+i] = data[20+i];
+            data[20+i] = buffer;
+        }
+        
+    }
+
+    public void y(){
+        byte buffer;
+
+        //UP ROTATION
+        buffer = data[0];
+        data[0] = data[2];
+        data[2] = data[3];
+        data[3] = data[1];
+        data[1] = buffer;
+
+        //DOWN PRIME ROTATION
+        buffer = data[17];
+        data[17] = data[19];
+        data[19] = data[18];
+        data[18] = data[16];
+        data[16] = buffer;
+
+        //MAIN AXIS
+        for(int i = 0; i < 4; i++){
+            buffer = data[4+i];
+            data[4+i] = data[8+i];
+            data[8+i] = data[23-i];
+            data[23-i] = data[12+i];
+            data[12+i] = buffer;
+        }
+        
+    }
+
+    public void z(){
+        byte buffer;
+        
+        //FRONT ROTATION
+        buffer = data[4];
+        data[4] = data[6];
+        data[6] = data[7];
+        data[7] = data[5];
+        data[5] = buffer;
+
+        //BACK PRIME ROTATION
+        buffer = data[21];
+        data[21] = data[23];
+        data[23] = data[22];
+        data[22] = data[20];
+        data[20] = buffer;
+
+        //MAIN AXIS
+        byte[] right = new byte[]{9, 11, 8, 10};
+        byte[] left = new byte[]{14, 12, 15, 13};
+
+        for(int i = 0; i < 4; i++){
+            buffer = data[i];
+            data[i] = data[left[i]];
+            data[left[i]] = data[19-i];
+            data[19-i] = data[right[i]];
+            data[right[i]] = buffer;
+        }
+        
+    }
+
+    /**
+     * Generates an array that stores the number of x, y, and z rotations to orient the cube so that the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom.
+     * Only ever uses two of the three moves (x,y,z) and will either be in the order x,y or z,y
+     * @param s State to be reoriented
+     * @return The rotations necessary to move from the original state to the desired state. In the form [x-rotations, y-rotations, z-rotations]
+     */
+    public int[] orient(){
+        StateArray s = clone();
+        int[] rotations = new int[]{0, 0, 0};
+        int yRotations;
+
+        //Rotates the cube, first in the x direction, then checks every possible y rotation
+        for(int x = 0; x < 4; x++){
+            rotations[0] = x;
+            yRotations = checkYRotations(s);
+            if(yRotations > -1){
+                rotations[1] = yRotations;
+                return rotations;
+            }
+            s.x();
+        }
+
+        //Rotates once in the z direction, then checks all y
+        s.z();
+        yRotations = checkYRotations(s);
+        if(yRotations > -1){
+            rotations[0] = 0;
+            rotations[1] = yRotations;
+            rotations[2] = 1;
+            return rotations;
+        }
+
+        //Rotates twice (for a total of 3 times) in the z direction, then checks all y
+        s.z();
+        s.z();
+        yRotations = checkYRotations(s);
+        if(yRotations > -1){
+            rotations[0] = 0;
+            rotations[1] = yRotations;
+            rotations[2] = 3;
+            return rotations;
+        }
+
+        return null;
+    }
+
+    /**
+     * Generates an array that stores the number of x, y, and z rotations to orient the cube so that the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom.
+     * Only ever uses two of the three moves (x,y,z) and will either be in the order x,y or z,y
+     * @param st State to be reoriented
+     * @return The rotations necessary to move from the original state to the desired state. In the form [x-rotations, y-rotations, z-rotations]
+     */
+    public int[] orient(StateArray s2){
+        StateArray s = clone();
+        int[] rotations = new int[]{0, 0, 0};
+        int yRotations;
+
+        //Rotates the cube, first in the x direction, then checks every possible y rotation
+        for(int x = 0; x < 4; x++){
+            rotations[0] = x;
+            yRotations = checkYRotations(s, s2);
+            if(yRotations > -1){
+                rotations[1] = yRotations;
+                return rotations;
+            }
+            s.x();
+        }
+
+        //Rotates once in the z direction, then checks all y
+        s.z();
+        yRotations = checkYRotations(s, s2);
+        if(yRotations > -1){
+            rotations[0] = 0;
+            rotations[1] = yRotations;
+            rotations[2] = 1;
+            return rotations;
+        }
+
+        //Rotates twice (for a total of 3 times) in the z direction, then checks all y
+        s.z();
+        s.z();
+        yRotations = checkYRotations(s, s2);
+        if(yRotations > -1){
+            rotations[0] = 0;
+            rotations[1] = yRotations;
+            rotations[2] = 3;
+            return rotations;
+        }
+
+        return null;
+    }
+
+    public int checkYRotations(StateArray s, StateArray s2){
+        for(int y = 0; y < 4; y++){
+            if(s.isCorrectOrientation(s2)) return y;
+            s.y();
+        }
+        return -1;
+    }
+
+    public int checkYRotations(StateArray s){
+        for(int y = 0; y < 4; y++){
+            if(s.isCorrectOrientation()) return y;
+            s.y();
+        }
+        return -1;
+    }
+
+    public void rotate(int[] rotations){
+        for(int x = 0; x < rotations[0]; x++) x();
+        for(int z = 0; z < rotations[2]; z++) z();
+        for(int y = 0; y < rotations[1]; y++) y();
+    }
+
+    public void rotateInverse(int[] rotations){
+        for(int x = 0; x < rotations[0]; x++){
+            x();
+            x();
+            x();
+        }
+        for(int z = 0; z < rotations[2]; z++){
+            z();
+            z();
+            z();
+        } 
+        for(int y = 0; y < rotations[0]; y++){
+            y();
+            y();
+            y();
+        }
     }
 }
