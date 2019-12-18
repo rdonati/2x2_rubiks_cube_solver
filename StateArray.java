@@ -51,8 +51,8 @@ public class StateArray{
     }
 
     /**
-     * Checks whether the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom
-     * @return True if the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom
+     * Checks whether the back, left, down corner matches the back left down corner of s
+     * @return True if the back, left, down corner matches the back left down corner of s
      */
     public boolean isCorrectOrientation(StateArray s){
         if(data[20] == s.data[20] && data[14] == s.data[14] && data[18] == s.data[18]) return true;
@@ -91,6 +91,155 @@ public class StateArray{
             h = 31 * h + data[i];
         }
         return h;
+    }
+
+    /**
+     * Generates an array that stores the number of x, y, and z rotations to orient the cube so that the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom.
+     * Only ever uses two of the three moves (x,y,z) and will either be in the order x,y or z,y
+     * @param s State to be reoriented
+     * @return The rotations necessary to move from the original state to the desired state. In the form [x-rotations, y-rotations, z-rotations]
+     */
+    public int[] orient(){
+        StateArray s = clone();
+        int[] rotations = new int[]{0, 0, 0};
+        int yRotations;
+
+        //Rotates the cube, first in the x direction, then checks every possible y rotation
+        for(int x = 0; x < 4; x++){
+            rotations[0] = x;
+            yRotations = checkYRotations(s);
+            if(yRotations > -1){
+                rotations[1] = yRotations;
+                return rotations;
+            }
+            s.x();
+        }
+
+        //Rotates once in the z direction, then checks all y
+        s.z();
+        yRotations = checkYRotations(s);
+        if(yRotations > -1){
+            rotations[0] = 0;
+            rotations[1] = yRotations;
+            rotations[2] = 1;
+            return rotations;
+        }
+
+        //Rotates twice (for a total of 3 times) in the z direction, then checks all y
+        s.z();
+        s.z();
+        yRotations = checkYRotations(s);
+        if(yRotations > -1){
+            rotations[0] = 0;
+            rotations[1] = yRotations;
+            rotations[2] = 3;
+            return rotations;
+        }
+        return null;
+    }
+
+    /**
+     * Generates an array that stores the number of x, y, and z rotations to orient the cube so that the back, left, down corner matches s2's back left down corner
+     * Only ever uses two of the three moves (x,y,z) and will either be in the order x,y or z,y
+     * @param s2 State to be reoriented
+     * @return The rotations necessary to move from the original state to the desired state. In the form [x-rotations, y-rotations, z-rotations]
+     */
+    public int[] orient(StateArray s2){
+        StateArray s = clone();
+        int[] rotations = new int[]{0, 0, 0};
+        int yRotations;
+
+        //Rotates the cube, first in the x direction, then checks every possible y rotation
+        for(int x = 0; x < 4; x++){
+            rotations[0] = x;
+            yRotations = checkYRotations(s, s2);
+            if(yRotations > -1){
+                rotations[1] = yRotations;
+                return rotations;
+            }
+            s.x();
+        }
+
+        //Rotates once in the z direction, then checks all y
+        s.z();
+        yRotations = checkYRotations(s, s2);
+        if(yRotations > -1){
+            rotations[0] = 0;
+            rotations[1] = yRotations;
+            rotations[2] = 1;
+            return rotations;
+        }
+
+        //Rotates twice (for a total of 3 times) in the z direction, then checks all y
+        s.z();
+        s.z();
+        yRotations = checkYRotations(s, s2);
+        if(yRotations > -1){
+            rotations[0] = 0;
+            rotations[1] = yRotations;
+            rotations[2] = 3;
+            return rotations;
+        }
+
+        return null;
+    }
+
+    /**
+     * Helper method for orient()... checks to see if any y rotations will match the bottom left down piece of s to the bottom left down piece of s2
+     * @param s The StateArray to check
+     * @return The number of y rotations needed to produce the desired orientation
+     */
+    public int checkYRotations(StateArray s, StateArray s2){
+        for(int y = 0; y < 4; y++){
+            if(s.isCorrectOrientation(s2)) return y;
+            s.y();
+        }
+        return -1;
+    }
+
+    /**
+     * Helper method for orient()... checks to see if any y rotations will put the (orange, yellow, blue) corner in the back left down position with yellow on the bottom
+     * @param s The StateArray to check
+     * @return The number of y rotations needed to produce the desired orientation
+     */
+    public int checkYRotations(StateArray s){
+        for(int y = 0; y < 4; y++){
+            if(s.isCorrectOrientation()) return y;
+            s.y();
+        }
+        return -1;
+    }
+
+    /**
+     * Rotates the cube with the rotations passed
+     * @param rotations An array of ints where the rotations are in the format [x, y, z]
+     */
+    public void rotate(int[] rotations){
+        for(int x = 0; x < rotations[0]; x++) x();
+        for(int z = 0; z < rotations[2]; z++) z();
+        for(int y = 0; y < rotations[1]; y++) y();
+    }
+
+    /**
+     * Rotates the cube with the inverse of the rotations passed
+     * @param rotations An array of ints where the rotations are in the format [x, y, z]
+     */
+    public void rotateInverse(int[] rotations){
+        for(int x = 0; x < rotations[0]; x++){
+            x();
+            x();
+            x();
+        }
+        for(int z = 0; z < rotations[2]; z++){
+            z();
+            z();
+            z();
+        } 
+        for(int y = 0; y < rotations[0]; y++){
+            y();
+            y();
+            y();
+        }
     }
 
     /******************************************************************
@@ -563,137 +712,5 @@ public class StateArray{
             data[right[i]] = buffer;
         }
         
-    }
-
-    /**
-     * Generates an array that stores the number of x, y, and z rotations to orient the cube so that the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom.
-     * Only ever uses two of the three moves (x,y,z) and will either be in the order x,y or z,y
-     * @param s State to be reoriented
-     * @return The rotations necessary to move from the original state to the desired state. In the form [x-rotations, y-rotations, z-rotations]
-     */
-    public int[] orient(){
-        StateArray s = clone();
-        int[] rotations = new int[]{0, 0, 0};
-        int yRotations;
-
-        //Rotates the cube, first in the x direction, then checks every possible y rotation
-        for(int x = 0; x < 4; x++){
-            rotations[0] = x;
-            yRotations = checkYRotations(s);
-            if(yRotations > -1){
-                rotations[1] = yRotations;
-                return rotations;
-            }
-            s.x();
-        }
-
-        //Rotates once in the z direction, then checks all y
-        s.z();
-        yRotations = checkYRotations(s);
-        if(yRotations > -1){
-            rotations[0] = 0;
-            rotations[1] = yRotations;
-            rotations[2] = 1;
-            return rotations;
-        }
-
-        //Rotates twice (for a total of 3 times) in the z direction, then checks all y
-        s.z();
-        s.z();
-        yRotations = checkYRotations(s);
-        if(yRotations > -1){
-            rotations[0] = 0;
-            rotations[1] = yRotations;
-            rotations[2] = 3;
-            return rotations;
-        }
-
-        return null;
-    }
-
-    /**
-     * Generates an array that stores the number of x, y, and z rotations to orient the cube so that the (yellow, blue, orange) corner is in the back, left, down position with yellow on bottom.
-     * Only ever uses two of the three moves (x,y,z) and will either be in the order x,y or z,y
-     * @param st State to be reoriented
-     * @return The rotations necessary to move from the original state to the desired state. In the form [x-rotations, y-rotations, z-rotations]
-     */
-    public int[] orient(StateArray s2){
-        StateArray s = clone();
-        int[] rotations = new int[]{0, 0, 0};
-        int yRotations;
-
-        //Rotates the cube, first in the x direction, then checks every possible y rotation
-        for(int x = 0; x < 4; x++){
-            rotations[0] = x;
-            yRotations = checkYRotations(s, s2);
-            if(yRotations > -1){
-                rotations[1] = yRotations;
-                return rotations;
-            }
-            s.x();
-        }
-
-        //Rotates once in the z direction, then checks all y
-        s.z();
-        yRotations = checkYRotations(s, s2);
-        if(yRotations > -1){
-            rotations[0] = 0;
-            rotations[1] = yRotations;
-            rotations[2] = 1;
-            return rotations;
-        }
-
-        //Rotates twice (for a total of 3 times) in the z direction, then checks all y
-        s.z();
-        s.z();
-        yRotations = checkYRotations(s, s2);
-        if(yRotations > -1){
-            rotations[0] = 0;
-            rotations[1] = yRotations;
-            rotations[2] = 3;
-            return rotations;
-        }
-
-        return null;
-    }
-
-    public int checkYRotations(StateArray s, StateArray s2){
-        for(int y = 0; y < 4; y++){
-            if(s.isCorrectOrientation(s2)) return y;
-            s.y();
-        }
-        return -1;
-    }
-
-    public int checkYRotations(StateArray s){
-        for(int y = 0; y < 4; y++){
-            if(s.isCorrectOrientation()) return y;
-            s.y();
-        }
-        return -1;
-    }
-
-    public void rotate(int[] rotations){
-        for(int x = 0; x < rotations[0]; x++) x();
-        for(int z = 0; z < rotations[2]; z++) z();
-        for(int y = 0; y < rotations[1]; y++) y();
-    }
-
-    public void rotateInverse(int[] rotations){
-        for(int x = 0; x < rotations[0]; x++){
-            x();
-            x();
-            x();
-        }
-        for(int z = 0; z < rotations[2]; z++){
-            z();
-            z();
-            z();
-        } 
-        for(int y = 0; y < rotations[0]; y++){
-            y();
-            y();
-            y();
-        }
     }
 }

@@ -4,10 +4,18 @@ public class CubeGraph{
 
     HashMap<StateArray, Vertex> vertexMap = new HashMap<StateArray, Vertex>();
     StateArray SOLVED_CUBE = new StateArray(new byte[]{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6});
+
+    /**
+     * Creates a CubeGraph and finds a solution for the given scramble
+     * @param args A string representing the state of the scrambled cube (see README.md for details)
+     */
     public static void main(String[] args) {
         CubeGraph c = new CubeGraph();
+        
+        //Below is where you can enter the scramble in code... this will be overridden if an alternative scramble is passed in the command line
         String scramble = "obobbrbryyyywwwwrgrggogo";
         if(args.length > 0) scramble = args[0];
+
         c.solve(scramble);
     }
 
@@ -41,15 +49,10 @@ public class CubeGraph{
             char[] A = s.toCharArray();
             for(int i = 0; i < A.length; i++){
                 char c = A[i];
-                if(c == 'U'){
-                    A[i] = 'F';
-                }else if(c == 'F'){
-                    A[i] = 'D';
-                }else if(c == 'D'){
-                    A[i] = 'B';
-                }else if(c == 'B'){
-                    A[i] = 'U';
-                }
+                if(c == 'U') A[i] = 'F';
+                else if(c == 'F') A[i] = 'D';
+                else if(c == 'D') A[i] = 'B';
+                else if(c == 'B') A[i] = 'U';
             }
 
             return new String(A);
@@ -64,15 +67,10 @@ public class CubeGraph{
             char[] A = s.toCharArray();
             for(int i = 0; i < A.length; i++){
                 char c = A[i];
-                if(c == 'F'){
-                    A[i] = 'R';
-                }else if(c == 'R'){
-                    A[i] = 'B';
-                }else if(c == 'L'){
-                    A[i] = 'F';
-                }else if(c == 'B'){
-                    A[i] = 'L';
-                }
+                if(c == 'F') A[i] = 'R';
+                else if(c == 'R') A[i] = 'B';
+                else if(c == 'L') A[i] = 'F';
+                else if(c == 'B') A[i] = 'L';
             }
             return new String(A);
         }
@@ -86,15 +84,10 @@ public class CubeGraph{
             char[] A = s.toCharArray();
             for(int i = 0; i < A.length; i++){
                 char c = A[i];
-                if(c == 'U'){
-                    A[i] = 'L';
-                }else if(c == 'R'){
-                    A[i] = 'U';
-                }else if(c == 'L'){
-                    A[i] = 'D';
-                }else if(c == 'D'){
-                    A[i] ='R';
-                }
+                if(c == 'U') A[i] = 'L';
+                else if(c == 'R') A[i] = 'U';
+                else if(c == 'L') A[i] = 'D';
+                else if(c == 'D') A[i] ='R';
             }
             return new String(A);
         }
@@ -157,23 +150,14 @@ public class CubeGraph{
         public String findSolutionNoRotations(int[] rotations){
             String solution = findSolution();
             //Reversing y rotations
-            for(int i = 0; i < rotations[1]; i++){
-                solution = yTransform(solution);
-            }
-            
+            for(int i = 0; i < rotations[1]; i++) solution = yTransform(solution);
             //Reversing z rotations
-            for(int i = 0; i < rotations[2]; i++){
-                solution = zTransform(solution);
-            }
-            
+            for(int i = 0; i < rotations[2]; i++) solution = zTransform(solution);
             //Reversing x rotations
-            for(int i = 0; i < rotations[0]; i++){
-                solution = xTransform(solution);
-            }
+            for(int i = 0; i < rotations[0]; i++) solution = xTransform(solution);
 
             return solution;
         }
-
     }
 
     /**
@@ -181,7 +165,7 @@ public class CubeGraph{
      * @param state The state that the vertex represents
      * @return The vertex with the given state
      */
-    public Vertex getVertex(byte[] s){
+    public Vertex addVertex(byte[] s){
         StateArray state = new StateArray(s);
         Vertex v = vertexMap.get(state);
         if(v == null){
@@ -196,7 +180,7 @@ public class CubeGraph{
      * @param state The state that the vertex represents
      * @return The vertex with the given state
      */
-    public Vertex getVertex(StateArray state){
+    public Vertex addVertex(StateArray state){
         Vertex v = vertexMap.get(state);
         if(v == null){
             v = new Vertex(state);
@@ -206,7 +190,7 @@ public class CubeGraph{
     }
 
     /**
-     * Creates a graph by 
+     * Creates a graph by:
      * 1. Starting with a solved cube 
      * 2. Adding all of the states reachable from the solved cube as its neighbors
      * 3. Repeating the process on all of its neighbors until the desired state is found
@@ -216,7 +200,7 @@ public class CubeGraph{
     public Vertex run(StateArray scramble){
         int distCounter = 0;
         int[] numCounter = new int[20];
-        Vertex s = getVertex(SOLVED_CUBE);
+        Vertex s = addVertex(SOLVED_CUBE);
         Queue<Vertex> q = new ArrayDeque<Vertex>();
         System.out.println("# moves deep: states at that depth");
 
@@ -239,7 +223,7 @@ public class CubeGraph{
             ArrayList<StateArray> nbs = getNbs(v);
             for(StateArray state : nbs){
                 if(vertexMap.containsKey(state)) continue;
-                Vertex u = getVertex(state);
+                Vertex u = addVertex(state);
                 u.dist = (byte)(v.dist + 1);
                 u.prev = v;
                 q.add(u);
@@ -249,7 +233,7 @@ public class CubeGraph{
     }
 
     /**
-     * Applies all possible moves to the given state and returns an ArrayList of the resulting states. Only applies r, b, and d because f, b, and l can be achieved by applying the original moves and s rotation.
+     * Applies all possible moves to the given state and returns an ArrayList of the resulting states. Only applies R U and F because L D and B can be achieved by applying the original moves and a rotation.
      * @param v The original state
      * @return An ArrayList of states reached by applying every possible move to the original state
      */
