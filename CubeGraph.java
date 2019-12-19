@@ -3,7 +3,7 @@ import java.util.*;
 public class CubeGraph{
 
     HashMap<StateArray, Vertex> vertexMap = new HashMap<StateArray, Vertex>();
-    StateArray SOLVED_CUBE = new StateArray(new byte[]{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6});
+    StateArray SOLVED_CUBE = new StateArray(new byte[]{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5});
 
     /**
      * Creates a CubeGraph and finds a solution for the given scramble
@@ -13,7 +13,7 @@ public class CubeGraph{
         CubeGraph c = new CubeGraph();
         
         //Below is where you can enter the scramble in code... this will be overridden if an alternative scramble is passed in the command line
-        String scramble = "obobbrbryyyywwwwrgrggogo";
+        String scramble = "rrbbwwborgwwboyyogoggryy";
         if(args.length > 0) scramble = args[0];
 
         c.solve(scramble);
@@ -35,8 +35,80 @@ public class CubeGraph{
         int[] rotations = SOLVED_CUBE.orient(s);
         SOLVED_CUBE.rotate(rotations);
 
-        Vertex finalState = run(s);
+        Vertex finalState = runFast(s);
         System.out.println("\nSolution: " + finalState.findSolution());
+    }
+
+    /**
+     * Creates a graph by:
+     * 1. Starting with a solved cube 
+     * 2. Adding all of the states reachable from the solved cube as its neighbors
+     * 3. Repeating the process on all of its neighbors until the desired state is found
+     * @param scramble The state of the scrambled cube
+     * @return The vertex that corresponds to the given state
+     */
+    public Vertex runFast(StateArray scramble){
+        HashMap<StateArray, Vertex> vertexMap2 = new HashMap<StateArray, Vertex>();
+        
+        int distFromSolved = 0;
+        int distFromScrambled = 0;
+        Vertex s = addVertex(SOLVED_CUBE);
+        Vertex e = new Vertex(scramble);
+        vertexMap2.put(e.state, e);
+
+        Queue<Vertex> q = new ArrayDeque<Vertex>();
+        Queue<Vertex> q2 = new ArrayDeque<Vertex>();
+        q.add(s);
+        q2.add(e);
+        Vertex v;
+        Vertex u;
+        ArrayList<StateArray> nbs;
+        
+        for(int i = 1; i < 7; i++){
+            while(distFromScrambled < i){
+                v = q2.poll();
+
+                nbs = getNbs(v);
+                for(StateArray state : nbs){
+                    if(vertexMap.containsKey(state)){
+                        Vertex middle = vertexMap.get(state);
+                        u = new Vertex(state);
+                        u.prev = middle;
+                        u.next = v;
+                        u.setPrev();
+                        return e;
+                    }
+                    if(vertexMap2.containsKey(state)) continue;
+                    u = new Vertex(state);
+                    u.next = v;
+                    u.dist = v.dist + 1;
+                    distFromScrambled = u.dist;
+                    vertexMap2.put(u.state, u);
+                    q2.add(u);
+                }
+            }
+
+            while(distFromSolved < i){
+                v = q.poll();
+
+                nbs = getNbs(v);
+                for(StateArray state : nbs){
+                    if(vertexMap2.containsKey(state)){
+                        Vertex middle = vertexMap2.get(state);
+                        middle.prev = v;
+                        middle.setPrev();
+                        return e;
+                    }
+                    if(vertexMap.containsKey(state)) continue;
+                    u = addVertex(state);
+                    u.prev = v;
+                    u.dist = v.dist + 1;
+                    distFromSolved = u.dist;
+                    q.add(u);
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -52,6 +124,7 @@ public class CubeGraph{
         int[] numCounter = new int[20];
         Vertex s = addVertex(SOLVED_CUBE);
         Queue<Vertex> q = new ArrayDeque<Vertex>();
+        
         System.out.println("# moves deep: states at that depth");
 
         q.add(s);

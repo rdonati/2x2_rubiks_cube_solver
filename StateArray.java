@@ -180,7 +180,6 @@ public class StateArray{
             rotations[2] = 3;
             return rotations;
         }
-
         return null;
     }
 

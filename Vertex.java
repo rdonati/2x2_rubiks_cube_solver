@@ -2,9 +2,11 @@ public class Vertex{
     //Stores the cube's state (see README.md for clarification)
     StateArray state;
     //Number of moves required to solve (distance from the solved cube)
-    byte dist = 0;
+    int dist = 0;
     //The Vertex from which this one was generated
     Vertex prev;
+    //The Vertex after the current vertex
+    Vertex next;
 
     /**
      * Constructor for vertex
@@ -135,5 +137,13 @@ public class Vertex{
         for(int i = 0; i < rotations[0]; i++) solution = xTransform(solution);
 
         return solution;
+    }
+
+    public void setPrev(){
+        Vertex v = this;
+        while(v.next != null){
+            v.next.prev = v;
+            v = v.next;
+        }
     }
 }
