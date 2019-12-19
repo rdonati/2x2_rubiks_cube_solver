@@ -20,7 +20,7 @@ The program uses a graph to model a 2x2 Rubik's Cube, where each Vertex is a sta
 
 A couple tricks were used to conserve space. First, nodes only store (the node that they came from) and (their state). The states are stored as an array of bytes, which saves considerable space over ints. Additionally, no edges are actually stored because we only care about the path from a node back to the solved state, which we can generate by backtracking. The main space issue is that each state is stored 24 times; one for each of the cube's 24 possible orientations. To avoid this, we only use the use R U and F moves, which essentially locks the back left down corner in place. We've still generated each possible state, but we've avoided redundancy as all states are relative to the back left down corner, which is now fixed.<br><br>
 
-**UPDATE**
+/*/*UPDATE/*/*
 I was able to drastically improve the speed at which the program finds solutions with the following approach: instead of starting with the solves state and branching toward the scrambled state, I started with both the solved <b>AND</b> scrambled states and branched toward each other.<br><br>
 
 <h4>Visualization of Findings:</h4>
