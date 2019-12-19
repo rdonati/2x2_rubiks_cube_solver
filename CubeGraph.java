@@ -13,7 +13,7 @@ public class CubeGraph{
         CubeGraph c = new CubeGraph();
         
         //Below is where you can enter the scramble in code... this will be overridden if an alternative scramble is passed in the command line
-        String scramble = "rrbbwwborgwwboyyogoggryy";
+        String scramble = "wwwwggggrrrrooooyyyybbbb";
         if(args.length > 0) scramble = args[0];
 
         c.solve(scramble);
@@ -40,10 +40,8 @@ public class CubeGraph{
     }
 
     /**
-     * Creates a graph by:
-     * 1. Starting with a solved cube 
-     * 2. Adding all of the states reachable from the solved cube as its neighbors
-     * 3. Repeating the process on all of its neighbors until the desired state is found
+     * Improved version of run
+     * Instead of moving out, turn by turn, from a solved cube, this approach moves from both the solved cube and the scrambled cube until they find a shared state
      * @param scramble The state of the scrambled cube
      * @return The vertex that corresponds to the given state
      */
@@ -64,7 +62,7 @@ public class CubeGraph{
         Vertex u;
         ArrayList<StateArray> nbs;
         
-        for(int i = 1; i < 7; i++){
+        for(int i = 1; i < 8; i++){
             while(distFromScrambled < i){
                 v = q2.poll();
 
@@ -120,6 +118,7 @@ public class CubeGraph{
      * @return The vertex that corresponds to the given state
      */
     public Vertex run(StateArray scramble){
+        int totalStateCounter = 0;
         int distCounter = 0;
         int[] numCounter = new int[20];
         Vertex s = addVertex(SOLVED_CUBE);
@@ -132,15 +131,16 @@ public class CubeGraph{
         while(!q.isEmpty()){
             Vertex v = q.poll();
 
-            //Checks to see if the desired state has been found
-            if(v.state.equals(scramble)) return v;
-            
             //Prints the number of states that are 1, 2, 3... moves away from being solved
+            totalStateCounter++;
             numCounter[v.dist]++;
             if(v.dist > distCounter){
                 System.out.println(distCounter + ": " + String.format("%,d", numCounter[distCounter]));
                 distCounter++;
             }
+
+            //Checks to see if the desired state has been found
+            if(v.state.equals(scramble)) return v;
 
             //Runs a modified version of BFS to create a graph
             ArrayList<StateArray> nbs = getNbs(v);
@@ -152,6 +152,8 @@ public class CubeGraph{
                 q.add(u);
             }
         }
+        System.out.println("11: " + String.format("%,d", numCounter[11]));
+        System.out.println("Total states: " + String.format("%,d", totalStateCounter));
         return null;
     }
 
