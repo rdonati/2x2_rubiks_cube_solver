@@ -13,8 +13,8 @@ public class CubeGraph{
         CubeGraph c = new CubeGraph();
         
         //Below is where you can enter the scramble in code... this will be overridden if an alternative scramble is passed in the command line
-        String scramble = "wwwwggggrrrrooooyyyybbbb";
-        if(args.length > 0) scramble = args[0];
+        String scramble = "ogbgrwbyowoyrywrryoggbwb";
+        // if(args.length > 0) scramble = args[0];
 
         c.solve(scramble);
     }

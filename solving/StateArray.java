@@ -180,7 +180,7 @@ public class StateArray{
             rotations[2] = 3;
             return rotations;
         }
-        return null;
+        return rotations;
     }
 
     /**
@@ -214,6 +214,7 @@ public class StateArray{
      * @param rotations An array of ints where the rotations are in the format [x, y, z]
      */
     public void rotate(int[] rotations){
+        System.out.println("hello");
         for(int x = 0; x < rotations[0]; x++) x();
         for(int z = 0; z < rotations[2]; z++) z();
         for(int y = 0; y < rotations[1]; y++) y();
