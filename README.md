@@ -5,19 +5,20 @@
 -   OpenCV
 -   Numpy
 -   Sklearn
-    `pip install opencv-python scikit-learn numpy`
+
+`pip install opencv-python scikit-learn numpy`
 
 #### How to use:
 
 -   Install dependencies and run `python index.py`
 -   Your webcam will open. Hold the cube the cube in any orientation... this is the orientation you will solve it in. Use the spacebar to take a picture of each face in the following order:
     1. Take a picture of the back face. Since you're holding the cube the way you're going to solve it, the back should already be facing your webcam.
-    1. Do a y move so that the left side is now in the back. Take a picture.
-    1. Do a y move again, take a picture.
-    1. Do a y move again, take a picture.
-    1. Do one more y move so that the cube is back in its original orientation. Now do an x move so that the top side is facing the back. Take a picture.
-    1. Do two more x moves, so that the bottom side is facing the back. Take a picture.
-    1. You have now taken a picture of every face. Do one more x move to return the cube to its original orientation, and wait for the solution to appear in the console.
+    2. Do a y move so that the left side is now in the back. Take a picture.
+    3. Do a y move again, take a picture.
+    4. Do a y move again, take a picture.
+    5. Do one more y move so that the cube is back in its original orientation. Now do an x move so that the top side is facing the back. Take a picture.
+    6. Do two more x moves, so that the bottom side is facing the back. Take a picture.
+    7. You have now taken a picture of every face. Do one more x move to return the cube to its original orientation, and wait for the solution to appear in the console.
 
 #### How it Works (the basics)
 
@@ -25,14 +26,13 @@ We use the OpenCV library to translate images of the cube into a single string t
 The state becomes a string of 24 characters (one for each sticker). <br>
 For example: a solved cube with white on top would be entered as "wwwwggggrrrrooooyyyybbbb"
 
-w = white
-g = green
-r = red
-o = orange
-y = yellow
-b = blue
+w = white <br>
+g = green <br>
+r = red <br>
+o = orange <br>
+y = yellow <br>
+b = blue <br>
 
-Order in which to enter state:<br><br>
 <img src = "2x2_guide.png">
 
 The program uses a graph to model a 2x2 Rubik's Cube, where each Vertex is a state that the cube can be in and each Edge is the move that would transition from one state to another. To generate this graph, we start with a solved cube. We then generate all of its neighbors by performing every possible move on it. From here, the cycle repeats–for each of the neighbors that was just generated, we find its neighbors, checking to make sure that the resulting state is not redundant (e.g. performing the moves R R' would result in a solved cube, but we already know that we can achieve a solved cube by applying no moves, so the R R' case is ignored). <br><br>
